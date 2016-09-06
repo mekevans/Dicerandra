@@ -1,0 +1,418 @@
+model {
+
+  # logical nodes with dynamical equations
+  for (p in 1:P) {
+    llike.pt[p,1] <- 0
+    for (t in 2:Y) {
+      mu.germ[p, t] <- a[p,t]*(mu.sdb[p, t-1] 
+                       + inprod(Fec[p,t-1,1:3], Nrep[p,  t-1, 1:3]))
+      mu.sdb[p, t] <- b[p,t]*(mu.sdb[p, t-1] 
+                      + inprod(Fec[p,t-1,1:3], Nrep[p, t-1, 1:3]))
+  
+      Ngerm[p,t] ~ dpois(mu.germ[p,t])
+  
+      log.cpo.germ[p,t] <- -mu.germ[p,t] + Ngerm[p,t]*log(mu.germ[p,t])
+                           - logfact(Ngerm[p,t])
+
+      a[p,t]<-exp(delta.t1)*g[p,t-1]
+      b[p,t]<-exp(delta.t1)*exp(delta.t2)*(1-g[p,t-1])
+    }
+    mu.sdb[p,1] ~ dpois(1000)
+  }
+  
+  # seedling survival model
+  #		Nsdlg[p, t] ~ dbin(s3, Ngerm[p, t])
+  for (t in 2:20) {
+    Nsdlg[1,t] ~ dbin(s3[1,t], Ngerm[1,t])
+    Ndie[1,t] <- Ngerm[1,t] - Nsdlg[1,t]
+    log.cpo.sdlg[1,t] <- logfact(Ngerm[1,t]) - logfact(Nsdlg[1,t]) 
+                         - logfact(Ndie[1,t]) + Nsdlg[1,t]*log(s3[1,t])
+			 + Ndie[1,t]*log(1.0 - s3[1,t])
+    logit(s3[1,t]) <- b1.s3*tsf[t,1] + yr.s3[t,1]
+  }
+  for (t in 2:6) {
+    Nsdlg[2,t] ~ dbin(s3[2,t], Ngerm[2,t])
+    Ndie[2,t] <- Ngerm[2,t] - Nsdlg[2,t]
+    log.cpo.sdlg[2,t] <- logfact(Ngerm[2,t]) - logfact(Nsdlg[2,t]) 
+                         - logfact(Ndie[2,t]) + Nsdlg[2,t]*log(s3[2,t])
+			 + Ndie[2,t]*log(1.0 - s3[2,t])
+    logit(s3[2,t]) <- b1.s3*tsf[t,2] + yr.s3[t,2]
+  }
+  for (t in 8:10) {
+    Nsdlg[2,t] ~ dbin(s3[2,t], Ngerm[2,t])
+    Ndie[2,t] <- Ngerm[1,t] - Nsdlg[2,t]
+    log.cpo.sdlg[2,t] <- logfact(Ngerm[2,t]) - logfact(Nsdlg[2,t]) 
+                         - logfact(Ndie[2,t]) + Nsdlg[2,t]*log(s3[2,t])
+			 + Ndie[2,t]*log(1.0 - s3[2,t])
+    logit(s3[2,t]) <- b1.s3*tsf[t,2] + yr.s3[t,2]
+  }
+  for (t in 12:13) {
+    Nsdlg[2,t] ~ dbin(s3[2,t], Ngerm[2,t])
+    Ndie[2,t] <- Ngerm[2,t] - Nsdlg[2,t]
+    log.cpo.sdlg[2,t] <- logfact(Ngerm[2,t]) - logfact(Nsdlg[2,t]) 
+                         - logfact(Ndie[2,t]) + Nsdlg[2,t]*log(s3[2,t])
+			 + Ndie[2,t]*log(1.0 - s3[2,t])
+    logit(s3[2,t]) <- b1.s3*tsf[t,2] + yr.s3[t,2]
+  }
+  for (t in 15:20) {
+    Nsdlg[2,t] ~ dbin(s3[2,t], Ngerm[2,t])
+    Ndie[2,t] <- Ngerm[2,t] - Nsdlg[2,t]
+    log.cpo.sdlg[2,t] <- logfact(Ngerm[2,t]) - logfact(Nsdlg[2,t]) 
+                         - logfact(Ndie[2,t]) + Nsdlg[2,t]*log(s3[2,t])
+			 + Ndie[2,t]*log(1.0 - s3[2,t])
+    logit(s3[2,t]) <- b1.s3*tsf[t,2] + yr.s3[t,2]
+  }
+  for (t in 2:7) {
+    Nsdlg[3,t] ~ dbin(s3[3,t], Ngerm[3,t])
+    Ndie[3,t] <- Ngerm[3,t] - Nsdlg[3,t]
+    log.cpo.sdlg[3,t] <- logfact(Ngerm[3,t]) - logfact(Nsdlg[3,t]) 
+                         - logfact(Ndie[3,t]) + Nsdlg[3,t]*log(s3[3,t])
+			 + Ndie[3,t]*log(1.0 - s3[3,t])
+    logit(s3[3,t]) <- b1.s3*tsf[t,3] + yr.s3[t,3]
+  }
+  for (t in 10:13) {
+    Nsdlg[3,t] ~ dbin(s3[3,t], Ngerm[3,t])
+    Ndie[3,t] <- Ngerm[3,t] - Nsdlg[3,t]
+    log.cpo.sdlg[3,t] <- logfact(Ngerm[3,t]) - logfact(Nsdlg[3,t]) 
+                         - logfact(Ndie[3,t]) + Nsdlg[3,t]*log(s3[3,t])
+			 + Ndie[3,t]*log(1.0 - s3[3,t])
+    logit(s3[3,t]) <- b1.s3*tsf[t,3] + yr.s3[t,3]
+  }
+  for (t in 15:20) {
+    Nsdlg[3,t] ~ dbin(s3[3,t], Ngerm[3,t])
+    Ndie[3,t] <- Ngerm[3,t] - Nsdlg[3,t]
+    log.cpo.sdlg[3,t] <- logfact(Ngerm[3,t]) - logfact(Nsdlg[3,t]) 
+                         - logfact(Ndie[3,t]) + Nsdlg[3,t]*log(s3[3,t])
+			 + Ndie[3,t]*log(1.0 - s3[3,t])
+    logit(s3[3,t]) <- b1.s3*tsf[t,3] + yr.s3[t,3]
+  }
+  Nsdlg[4,2] ~ dbin(s3[4,2], Ngerm[4,2])
+  Ndie[4,2] <- Ngerm[4,2] - Nsdlg[4,2]
+  log.cpo.sdlg[4,2] <- logfact(Ngerm[4,2]) - logfact(Nsdlg[4,2]) 
+                       - logfact(Ndie[4,2]) + Nsdlg[4,2]*log(s3[4,2])
+                       + Ndie[4,2]*log(1.0 - s3[4,2])
+  logit(s3[4,2]) <- b1.s3*tsf[2,4] + yr.s3[2,4]
+### excluding seedling survival in years that fire killed sdlgs
+  for (t in 4:9) {
+    Nsdlg[4,t] ~ dbin(s3[4,t], Ngerm[4,t])
+    Ndie[4,t] <- Ngerm[4,t] - Nsdlg[4,t]
+    log.cpo.sdlg[4,t] <- logfact(Ngerm[4,t]) - logfact(Nsdlg[4,t]) 
+                         - logfact(Ndie[4,t]) + Nsdlg[4,t]*log(s3[4,t])
+			 + Ndie[4,t]*log(1.0 - s3[4,t])
+    logit(s3[4,t]) <- b1.s3*tsf[t,4] + yr.s3[t,4]
+  }
+  Nsdlg[4,11] ~ dbin(s3[4,11], Ngerm[4,11])
+  Ndie[4,11] <- Ngerm[4,11] - Nsdlg[4,11]
+  log.cpo.sdlg[4,11] <- logfact(Ngerm[4,11]) - logfact(Nsdlg[4,11]) 
+                       - logfact(Ndie[4,11]) + Nsdlg[4,11]*log(s3[4,11])
+	               + Ndie[4,11]*log(1.0 - s3[4,11])
+  logit(s3[4,11]) <- b1.s3*tsf[11,4] + yr.s3[11,4]
+  for (t in 13:18) {
+    Nsdlg[4,t] ~ dbin(s3[4,t], Ngerm[4,t])
+    Ndie[4,t] <- Ngerm[4,t] - Nsdlg[4,t]
+    log.cpo.sdlg[4,t] <- logfact(Ngerm[4,t]) - logfact(Nsdlg[4,t]) 
+                         - logfact(Ndie[4,t]) + Nsdlg[4,t]*log(s3[4,t])
+			 + Ndie[4,t]*log(1.0 - s3[4,t])
+    logit(s3[4,t]) <- b1.s3*tsf[t,4] + yr.s3[t,4]
+  }
+  Nsdlg[4,20] ~ dbin(s3[4,20], Ngerm[4,20])
+  Ndie[4,20] <- Ngerm[4,20] - Nsdlg[4,20]
+  log.cpo.sdlg[4,20] <- logfact(Ngerm[4,20]) - logfact(Nsdlg[4,20]) 
+                       - logfact(Ndie[4,20]) + Nsdlg[4,20]*log(s3[4,20])
+	               + Ndie[4,20]*log(1.0 - s3[4,20])
+  logit(s3[4,20]) <- b1.s3*tsf[20,4] + yr.s3[20,4]
+  for (t in 3:13) {
+    Nsdlg[5,t] ~ dbin(s3[5,t], Ngerm[5,t])
+    Ndie[5,t] <- Ngerm[5,t] - Nsdlg[5,t]
+    log.cpo.sdlg[5,t] <- logfact(Ngerm[5,t]) - logfact(Nsdlg[5,t]) 
+                         - logfact(Ndie[5,t]) + Nsdlg[5,t]*log(s3[5,t])
+	                 + Ndie[5,t]*log(1.0 - s3[5,t])
+    logit(s3[5,t]) <- b1.s3*tsf[t,5] + yr.s3[t,5]
+  }
+  for (t in 15:20) {
+    Nsdlg[5,t] ~ dbin(s3[5,t], Ngerm[5,t])
+    Ndie[5,t] <- Ngerm[5,t] - Nsdlg[5,t]
+    log.cpo.sdlg[5,t] <- logfact(Ngerm[5,t]) - logfact(Nsdlg[5,t]) 
+                         - logfact(Ndie[5,t]) + Nsdlg[5,t]*log(s3[5,t])
+	                 + Ndie[5,t]*log(1.0 - s3[5,t])
+    logit(s3[5,t]) <- b1.s3*tsf[t,5] + yr.s3[t,5]
+  }  
+
+  # predicting fecundity
+  for (p in 1:P) {
+    for (t in 1:Y) {
+      for (r in 1:3) {
+        Fec[p,t,r] <- mu.br[p,t,r]*mu.s[p,t]
+      }
+    }
+  }
+  
+  
+  # regression for germination
+  for (p in 1:P) {
+    for (t in 1:(Y-1)) {
+      logit(g[p,t]) <- b1.g*tsf[t,p] + yr.g[t]
+    }
+  }
+  
+  # regression for seeds/branch
+  for (i in 1:N.sd) {
+    sd[i] ~ dpois(mu.s[pop.s[i],yr.s[i]] )
+    log.cpo.sd[i] <- -mu.s[pop.s[i],yr.s[i]] + sd[i]*log(mu.s[pop.s[i],yr.s[i]])
+                     - logfact(sd[i])
+  }
+  for (p in 1:P) {
+    for (t in 1:Y) {
+      log(mu.s[p,t]) <- b1.s*tsf[t,p] + yr.sd[t,p]
+    }
+  }
+  
+  # regression for no. of branches
+  for (i in 1:N.br) {
+    br[i] ~ dpois(mu.br[pop[i],yr[i],stage[i]-2])
+    log.cpo.br[i] <- -mu.br[pop[i],yr[i],stage[i]-2] 
+                     + br[i]*log(mu.br[pop[i],yr[i],stage[i]-2])
+		     - logfact(br[i])
+  }
+  for (p in 1:P) {
+    for (t in 1:Y) {
+      for (r in 1:3) {
+        log(mu.br[p,t,r]) <- b1.br[r]*tsf[t,p] + yr.br[t,r,p]
+      }
+    }
+  }
+  
+  # prior for germination
+  for (t in 1:Y) {
+    mu.yr.g[t] <- b0.g + b3.g*year[t]
+    yr.g[t] ~ dnorm(mu.yr.g[t], tau.yr.g)
+  }
+  # hierarchical prior for seedling survival
+  for (p in 1:P){
+    pop.s3[p] ~ dnorm(b0.s3, tau.pop.s3)
+    for (t in 1:Y) {
+      mu.yr.s3[t,p] <- pop.s3[p] + b3.s3*year[t]
+      yr.s3[t,p] ~ dnorm(mu.yr.s3[t,p], tau.yr.s3)
+    }  
+  }
+  # hierarhical prior for seeds per branch
+  for (p in 1:P) {
+    pop.sd[p] ~ dnorm(b0.s, tau.pop.sd)
+    for (t in 1:Y) {
+      mu.yr.sd[t,p] <- pop.sd[p] + b3.s*year[t]
+      yr.sd[t,p] ~ dnorm(mu.yr.sd[t,p], tau.yr.sd)
+    }
+  }
+  # hierarchical prior for branches
+  for (r in 1:3) {
+    # population random effects
+    for (p in 1:P) {
+      pop.br[r,p] ~ dnorm(b0.br[r], tau.pop.br[r])
+      # year random effects
+      for (t in 1:Y) {
+         mu.yr.br[t,r,p] <- pop.br[r,p] + b3.br[r]*year[t]
+         yr.br[t,r,p] ~ dnorm(mu.yr.br[t,r,p], tau.yr.br[r])
+      }
+    }
+  }
+  # prior for year effects
+  for (t in 1:Y) {
+    year[t] <- 0.0 #~ dnorm(0.0, tau.year)
+  }
+  
+  delta.t1 <- delta*(-4)
+  delta.t2 <- delta*(-8)
+  delta ~ dgamma(2,20)
+  
+  # germination
+  b0.g ~ dnorm(0.0, tau.b0) 
+  b1.g ~ dnorm(0.0, tau.b1)
+  b3.g <- 2.0*ind.b3.g - 1.0
+  ind.b3.g ~ dbern(pi.b3.g)
+  pi.b3.g ~ dunif(0,1)
+  
+  # seedling survival
+  b0.s3 ~ dnorm(0.0, tau.b0)
+  b1.s3 ~ dnorm(0.0, tau.b1)
+  b3.s3 <- 2.0*ind.b3.s3 - 1.0
+  ind.b3.s3 ~ dbern(pi.b3.s3)
+  pi.b3.s3 ~ dunif(0,1)
+  
+  # seeds per branch
+  # prior for b0.s based on preliminary lmer() analysis
+  # b1.s <- 0 based on paucity of data to estimate tsf effect
+  b0.s ~ dnorm(0.15, tau.b0.s)
+  b1.s <- 0.0
+  b3.s <- 2.0*ind.b3.s - 1.0
+  ind.b3.s ~ dbern(pi.b3.s)
+  pi.b3.s ~ dunif(0,1)
+  tau.b0.s <- pow(sd.b0.s, -2)
+  sd.b0.s <- 1.3
+  
+  # flowering branches per individual
+  # prior for b0.br[] based on preliminary lmer() analysis
+  b0.br[1] ~ dnorm(0.0, tau.b0)
+  b0.br[2] ~ dnorm(1.3, tau.b0)
+  b0.br[3] ~ dnorm(3.5, tau.b0)
+  for (r in 1:3) {
+    b1.br[r] ~ dnorm(0.0, tau.b1)  
+  }
+  for (r in 1:2) {
+    b3.br[r] <- 2.0*ind.b3.br[r] - 1.0
+    ind.b3.br[r] ~ dbern(pi.b3.br[r])
+    pi.b3.br[r] ~ dunif(0,1)
+  }
+  b3.br[3] <- 1.0
+  
+  ### loop for each population
+  for (p in 1:P) {
+  
+  ### loop for each transition matrix (year)
+  for (t in 1:Y-1) {
+  
+  ### indicator for good data
+  ind[p,t] <- ((1-equals(t,1))*(1-equals(t,2))*equals(p,5) 
+              + (1-equals(p,5)))*(1-equals(tsf[t,p],0))*(1-equals(tsf[t,p],1))
+  
+  ### loop for one transition matrix
+  for (i in 1:S) { # columns
+    x[p,t,i,1:F] ~ dmulti(pi[p,t,i,1:F], n[p,t,i])
+    log.cpo.x[p,t,i] <- logfact(n[p,t,i]) - logfact(x[p,t,i,1]) 
+                        - logfact(x[p,t,i,2])
+                        - logfact(x[p,t,i,3]) - logfact(x[p,t,i,4]) 
+			- logfact(x[p,t,i,5]) + x[p,t,i,1]*log(pi[p,t,i,1])
+			+ x[p,t,i,2]*log(pi[p,t,i,2]) 
+			+ x[p,t,i,3]*log(pi[p,t,i,3]) 
+			+ x[p,t,i,4]*log(pi[p,t,i,4]) 
+			+ x[p,t,i,5]*log(pi[p,t,i,5]) 
+    n[p,t,i] <- sum(x[p,t,i,])
+    ### following are tsf effects for first row
+    log(phi[p,t,i,1]) <- (beta.pro[1]*tsf[t,p]*equals(1,i) 
+                         + beta.s[1]*tsf[t,p]*equals(2,i) 
+                         + beta.regnr[1]*tsf[t,p]*equals(3,i) 
+                         + beta.regnr[2]*tsf[t,p]*equals(4,i)  
+                         + beta.regnr[3]*tsf[t,p]*equals(5,i)
+                         + yr.tr[t,i,1])*ind[p,t] 
+    ### tsf effects for rows 2-4
+    for (j in 2:(F-1)) { # rows 2-4
+      log(phi[p,t,i,j]) <- (beta.s[j]*tsf[t,p]*equals(j+1,i) 
+                           + beta.pro[1]*tsf[t,p]*equals(j,i) 
+                           + beta.pro[2]*tsf[t,p]*equals(j-1,i) 
+                           + beta.pro[3]*tsf[t,p]*equals(j-2,i) 
+                           + beta.pro[4]*tsf[t,p]*equals(j-3,i) 
+                           + beta.prorep*tsf[t,p]*equals(i,2) 
+                           + beta.reg[1]*tsf[t,p]*equals(j+2,i) 
+                           + beta.reg[2]*tsf[t,p]*equals(j+3,i) 
+                           + beta.leap*tsf[t,p]*equals(i,1)
+                           + yr.tr[t,i,j])*ind[p,t] 
+    }
+    ### tsf effects for row F (fate = death)
+    log(phi[p,t,i,F]) <- 0
+    for (j in 1:F) {
+      pi[p,t,i,j] <- phi[p,t,i,j]/sum(phi[p,t,i,])
+    }
+  	
+  } # columns
+  ### i indexes state (S) in year t
+  ### j indexes fate (F) in year t+1
+  
+  }# t indexes transition
+  
+  }# p indexes population
+  
+  ### PRIORS
+  ### random effects
+  for (i in 1:S){
+    for (j in 1:(F-1)) {
+        b0.tr[i,j] ~ dnorm(0.0, tau.b0)
+        for (t in 1:Y){
+          mu.yr.tr[t,i,j] <- b0.tr[i,j] + year[t]*beta[i,j] 
+          yr.tr.tmp[t,i,j] ~ dnorm(mu.yr.tr[t,i,j], tau.yr.tr[i,j])
+          yr.tr[t,i,j] <- yr.tr.tmp[t,i,j]
+      }
+    }
+  }
+  
+  # priors for betas
+  for (i in 1:S){
+    for (j in 1:4) {
+      beta[i,j] <- 2.0*ind.beta[i,j] - 1.0
+      ind.beta[i,j] ~ dbern(pi.beta[i,j])
+      pi.beta[i,j] ~ dunif(0,1)
+    }
+  }
+
+  # priors for regnr (full)
+  for (i in 1:3) {
+    beta.regnr[i] ~ dnorm(0.0, tau.b1)
+  }
+  
+  # priors for leap
+  beta.leap ~ dnorm(0.0, tau.b1)
+  
+  # priors for prorep
+  beta.prorep ~ dnorm(0.0, tau.b1)
+  	
+  # priors for stasis (full)	
+  for (j in 1:(F-1)) {
+    beta.s[j] ~ dnorm(0.0, tau.b1)
+  }
+  
+  beta.death[1] <- 0.0 
+  for (i in 2:5) {
+    beta.death[i] <- beta.death[1]
+  }
+  
+  # priors for progression (full)
+  for (i in 1:4) {
+    beta.pro[i] ~ dnorm(0.0, tau.b1)
+  }
+  
+  # priors for regression (full)
+  for (i in 1:2) {
+    beta.reg[i] ~ dnorm(0.0, tau.b1)
+  }
+  
+  tau.b0 <- 1
+  tau.b1 <- 1
+
+  # prior based on lmer() results  
+  tau.yr.sd <- pow(sd.yr.sd, -2)
+  tau.pop.sd <- pow(sd.pop.sd, -2)
+  sd.yr.sd ~ dunif(0.5,1.5)
+  sd.pop.sd ~ dunif(0.5,1.5)
+
+  # prior based on lmer() results
+  for (r in 1:3) {
+    tau.yr.br[r] <- pow(sd.yr.br[r], -2)
+    sd.yr.br[r] ~ dunif(0.1,0.9)
+  } 
+  for (r in 1:3) {
+    tau.pop.br[r] <- pow(sd.pop.br[r], -2)
+    sd.pop.br[r] ~ dunif(0.05,0.5)
+  } 
+
+  # reasonably large amounts of data for remaining
+  # random effects
+  # uniform prior on standard deviation (following Gelman)
+  tau.yr.s3 <- pow(sd.yr.s3, -2)
+  sd.yr.s3 ~ dunif(0,max.sd)
+  tau.pop.s3 <- pow(sd.pop.s3, -2)
+  sd.pop.s3 ~ dunif(0,max.sd)
+  tau.yr.g <- pow(sd.yr.g, -2)
+  sd.yr.g ~ dunif(0,max.sd)
+  for (i in 1:S) {
+    for (j in 1:F) {
+      tau.yr.tr[i,j] <- pow(sd.yr.tr[i,j], -2)
+      sd.yr.tr[i,j] ~ dunif(0,max.sd)
+    }
+  }
+
+  # prior based on preliminary analysis showing upper 95% HPD interval
+  # < 0.25
+  tau.year <- pow(sd.year, -2)
+  sd.year ~ dunif(0,0.5)
+
+  max.sd <- 2.0
+
+}
